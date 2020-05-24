@@ -25,3 +25,8 @@ func (s *Service) Ping() {
 func (s *Service) Add(item Item) {
 	s.repo.Add(item)
 }
+
+//Find Item ... Ping to check connectivity
+func (s *Service) Find(ID string) []*Item {
+	return s.repo.Find(ID)
+}

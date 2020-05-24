@@ -16,16 +16,14 @@ func ProvideInventoryAPI(s Service) API {
 	return API{service: s}
 }
 
-// //Find ...
-// func (a *API) Find(c *gin.Context) {
+//Add ...
+func (a *API) Find(c *gin.Context) {
 
-// 	quoteID := c.Param("id")
-// 	affinityName := c.Param("affinityname")
+	ID := c.Param("id")
+	items := a.service.Find(ID)
 
-// 	qhs := a.service.Ping()
-
-// 	c.JSON(http.StatusOK, gin.H{"qhs": ToItemDTOs(qhs)})
-// }
+	c.JSON(http.StatusOK, items)
+}
 
 //Ping ...
 func (a *API) Ping(c *gin.Context) {

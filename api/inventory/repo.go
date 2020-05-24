@@ -37,37 +37,6 @@ func (r *Repo) GetClient() *mongo.Client {
 	return client
 }
 
-//Find ...
-func (r *Repo) Find() []*Item {
-	clientOptions := options.Client().ApplyURI(connStr)
-
-	client, err := mongo.Connect(context.TODO(), clientOptions)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	collection := client.Database("inventory").Collection("items")
-	filter := bson.D{}
-	findOptions := options.Find()
-	cur, err := collection.Find(context.TODO(), filter, findOptions)
-	if err != nil {
-		log.Fatal(err)
-	}
-	var items []*Item
-
-	for cur.Next(context.TODO()) {
-		var row Item
-		err := cur.Decode(&row)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		items = append(items, &row)
-
-	}
-	return items
-}
-
 //Add ... Adds an item
 func (r *Repo) Add(item Item) string {
 	clientOptions := options.Client().ApplyURI(connStr)
@@ -84,7 +53,41 @@ func (r *Repo) Add(item Item) string {
 		log.Println(err)
 	}
 
-	return result.InsertedID.(primitive.ObjectID).Hex() 
+	return result.InsertedID.(primitive.ObjectID).Hex()
+}
+
+//Find ... Gets an item
+func (r *Repo) Find(ID string) []*Item {
+	clientOptions := options.Client().ApplyURI(connStr)
+
+	client, err := mongo.Connect(context.TODO(), clientOptions)
+	if err != nil {
+		log.Println(err)
+	}
+
+	id, _ := primitive.ObjectIDFromHex(ID)
+	filter := bson.D{{"_id", id}}
+	var items []*Item
+
+	collection := client.Database("inventory").Collection("items")
+	cur, err := collection.Find(context.TODO(), filter)
+
+	if err != nil {
+		log.Println(err)
+	}
+
+	for cur.Next(context.TODO()) {
+		var item Item
+		err := cur.Decode(&item)
+		if err != nil {
+			log.Println(err)
+		}
+
+		items = append(items, &item)
+
+	}
+
+	return items
 }
 
 //Ping ...  Ping the DB to verify if the able to connect to the db

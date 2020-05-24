@@ -3,6 +3,9 @@
 GET {{url}}/
 
 ###
+GET {{url}}/get/5ec3f5f849ba7b7d22a3ef01
+
+###
 POST {{url}}/add HTTP/1.1
 Content-Type: application/json
 
